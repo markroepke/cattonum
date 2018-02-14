@@ -17,19 +17,28 @@ hash_labeler <- function(.x, .ncol, .seed) {
              row.names = unique_levels)
 }
 
+####################
+### hash_to_fact ###
+####################
+
+hash_to_fact <- function(.x, .lkp, .ncol, .colname) {
+  x_hash <- encode_from_lkp(x, .lkp)
+  x_hash_char <- paste0(.colname, hashed_x)
+  hash_fact_levels <- paste(.colname, seq_len(.ncol) - 1, sep = "_")
+  factor(x_hash_char, levels = hash_fact_levels) # model.matrix
+}
+
 ##################
 ### catto_hash ###
 ##################
-
-# lapply won't work since we're adding cols--use approach like in catto_dummy
 
 #' Feature hashing
 #'
 #' @param train The training data, in a \code{data.frame} or \code{tibble}.
 #' @param ... The columns to be encoded.  If none are specified, then
 #'   all character and factor columns are encoded.
-#' @param num_cols The response variable used to calculate means.
 #' @param test The test data, in a \code{data.frame} or \code{tibble}.
+#' @param num_cols The response variable used to calculate means.
 #' @param seed The seed to use for the MurmurHash algorithm
 #' @param verbose Should informative messages be printed?  Defaults to
 #'   \code{TRUE}.
@@ -41,8 +50,8 @@ hash_labeler <- function(.x, .ncol, .seed) {
 #' @export
 catto_hash <- function(train,
                        ...,
-                       num_cols = 128,
                        test,
+                       num_cols = 2 ^ 10,
                        seed = 4444,
                        verbose = TRUE) {
 
@@ -56,10 +65,8 @@ catto_hash <- function(train,
 
   hash_lkps <- lapply(train[cats],
                       hash_labeler,
-                      .x = train[[response]],
-                      .ncol = num_cols)
-
-  train[cats] <- encode_from_lkp(train[cats], hash_lkps)
+                      .ncol = num_cols,
+                      .seed = seed)
 
   if (! test_also) {
     train

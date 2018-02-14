@@ -17,7 +17,7 @@ status](https://codecov.io/gh/bfgray3/cattonum/branch/master/graph/badge.svg)](h
 features as numerics. It includes the following:
 
   - dummy encoding: `catto_dummy`
-  - feature hashing (future)
+  - feature hashing: `catto_hash`
   - frequency encoding: `catto_freq`
   - label encoding: `catto_label`
   - leave-one-out encoding: `catto_loo`
